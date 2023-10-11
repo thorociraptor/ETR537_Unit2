@@ -1,0 +1,406 @@
+---
+title: "Unit 2: Rtutorial"
+author: "Rachel Martiniak"
+format: html
+editor: visual
+---
+
+## Week 6: Working with Data
+
+In the previous R tutorial, we started to work on science classroom dataset. We applied the data intensive research steps to explore our data and investigate the relationship between students' grades and time-spent.
+
+Let's remember which libraries and functions we used!
+
+#### [**Your Turn:**]{.underline}
+
+Please write down one or two sentence to explain why and how we use the following libraries and functions.
+
+1.  **tidyverse:** Tidyverse is a library package that can be added to a project that includes helpful tools to transform and present data.
+
+2.  **skimr:** This provides an "automated" statistical summary about the variables in the data that's being analyzed.
+
+3.  **ggplot:** This is a package that provides data visualization tools present/create graphics (graphs) and customize the graphics (changing colors, etc.).
+
+4.  **read_csv():** This function imports data (in a csv) into R.
+
+5.  **view():** This function opens a new tab (when View is capitalized) to view the data in a spreadsheet-style within R.
+
+6.  **glimpse():** This provides a quick view of all columns of data (but not presented in spreadsheet-style)
+
+7.  **head():** This displays the first 6 rows of data.
+
+8.  **tail():** This displays the last 6 rows of data.
+
+9.  **select():** This function selects specific variables by name. It can also be used to rename variables.
+
+10. **filter():** This function looks at a set of data and filters (keeps) data that matches the specified conditions.
+
+11. **arrange():** This function arranges rows of data by the value of selected columns.
+
+12. **desc():** This function arranges rows of data in descending order.
+
+13. **geom_histogram():** This function creates a histogram based on selected data and specified variables (defining x and y axis).
+
+14. **geom_point():** This function creates a scatterplot based on selected data and specified variables.
+
+### Load the Tidyverse Package
+
+Let's start our R code along by loading the tidyverse package.
+
+```{r}
+library(tidyverse)
+
+```
+
+### Load the online science class data
+
+Now, load the online science class data from the data folder and assign your data to a new object.
+
+```{r}
+sci_classes <- read_csv("Data/sci-online-classes.csv")
+```
+
+You loaded the data, now what should we do?
+
+```{r}
+sci_classes
+```
+
+#### [**Your Turn:**]{.underline}
+
+Examine the contents of sci_classes in your console. You should type the object name to the console and check that.
+
+**Question:** Is your object a tibble? How do you know?
+
+**Your response here:** Yes, the object is a tibble. After I select run (or run in the console), I see "A tibble: 603 x 30"
+
+**Hint:** Check the output in the console.
+
+### Check your data with different functions
+
+You can check your data with different functions. Let's remember how we use different functions to check our data.
+
+```{r}
+view(sci_classes)
+head(sci_classes)
+tail(sci_classes)
+glimpse(sci_classes)
+```
+
+### **Isolating Data with dplyr**
+
+We will use select() function to select the following columns from our data.
+
+-   student_id
+
+-   subject
+
+-   semester
+
+-   FinalGradeCEMS
+
+-   After selecting these columns, assign that to a new object with a name of "student_grade".
+
+```{r}
+student_grade <- sci_classes |>
+  select(student_id,subject,semester,FinalGradeCEMS)
+
+student_grade
+```
+
+#### [**Your Turn:**]{.underline}
+
+Examine students' grades, what did you realize about it?
+
+**Your response here:** In looking at student grades, I can see that some final grades are missing (NA). Most grades appear higher than 70% but there are likely a few outliers (for example, student_id 71415 received a 14.45% or student_id 85390 received just 3.06%)
+
+**Hint:** Check the missing data.
+
+### **Specific select**
+
+Now, we will make a specific selection.
+
+-   Select all columns except subject and semester.
+
+-   Assign to a new object with a different name.
+
+-   Examine your data frame.
+
+```{r}
+new_object<-select(sci_classes,-c(subject,semester))
+```
+
+Checking the data frame:
+
+```         
+new_object
+```
+
+#### [**Your Turn:**]{.underline}
+
+-   Select all columns except student_id and FinalGradeCEMS.
+
+-   Assign to a new object with a different name.
+
+-   Examine your data frame.
+
+```{r}
+another_object<-select(sci_classes,-c(student_id,FinalGradeCEMS))
+```
+
+### **Specific select**
+
+-   Select only the columns that start with Time
+
+-   Assign to a new object with a different name.
+
+-   Use view() function to examine your data frame.
+
+```{r}
+time_object<-select(sci_classes,starts_with("Time"))
+view(time_object)
+```
+
+#### [**Your Turn:**]{.underline}
+
+-   Select only the columns that ends with "r"
+
+-   Assign to a new object with a different name.
+
+-   Use view() function to examine your data frame.
+
+```{r}
+r_object<-select(sci_classes,ends_with("r"))
+view(r_object)
+```
+
+### Filter Function
+
+-   Filter the sci_classes data frame for just males.
+
+-   Assign to a new object.
+
+-   Use the head() function to examine your data frame.
+
+```{r}
+male_students <- sci_classes |>
+  filter(Gender=="M")
+head(male_students)
+```
+
+#### [**Your Turn:**]{.underline}
+
+-   Filter the sci_classes data frame for just females.
+
+-   Assign to a new object.
+
+-   Use the tail() function to examine your data frame.
+
+```{r}
+female_students <- sci_classes |>
+  filter(Gender=="F")
+tail(female_students)
+```
+
+Let's try filter function with two arguments now.
+
+-   Filter the sci_classes data frame for students whose
+
+-   percentage_earned is greater than 0.8
+
+-   Assign to a new object.
+
+-   Use the tail() function to examine your data frame. 
+
+```{r}
+bio_student<-filter(sci_classes, percentage_earned>0.8 & subject=="BioA")
+tail(bio_student)
+```
+
+[**Your Turn:**]{.underline}
+
+Filter the sci_classes data frame for students whose
+
+-   percentage_earned is smaller or equal to 0.6
+
+-   Subject is equal to FrScA
+
+-   Assign to a new object.
+
+-   Use the head() function to examine your data frame. 
+
+```{r}
+frsca_student<-filter(sci_classes, percentage_earned<0.6 & subject=="FrScA")
+
+```
+
+Let's use filter () function for the missing data.
+
+-   Filter the sci_classes data frame so rows with 
+
+-   NA for points earned are removed.
+
+-   Assign to a new object.
+
+-   Use the glimpse() function to examine your data frame.
+
+```{r}
+clean_data <- sci_classes |>
+  filter(!is.na(Points_Earned))
+
+glimpse(clean_data)
+```
+
+Filter the sci_classes data for the following subjects:
+
+-   BioA
+
+-   PhysA
+
+-   OcnA
+
+-   Assign to a new object with a different name.
+
+-   Use the summary() function to examine your data frame.
+
+```{r}
+my_classes<-filter(sci_classes,subject%in%c("BioA","PhysA","OcnA"))
+summary(my_classes)
+```
+
+### Arrange () Function
+
+Let's recall how we were using the arrange () function for our dataset.
+
+-   Arrange sci_classes by subject subject then 
+
+-   percentage_earned in descending order.
+
+-   Assign to a new object.
+
+-   Use the str() function to examine your data frame.
+
+```{r}
+order_class<-sci_classes|>
+  arrange(subject,desc(percentage_earned))
+
+str(order_class)
+```
+
+## %\>% Pipe Operator
+
+Using sci_classes data and the %\>% pipe operator:
+
+-   Select subject, section, time spent in hours and final course grade.
+
+-   Filter for students in OcnA courses with grades greater than or equal to 60.
+
+-   Arrange grades by section in descending order.
+
+-   Assign to a new object.
+
+Examine the contents using a method of your choosing.
+
+```{r}
+fire<-sci_classes%>%
+  select(subject, section, TimeSpent_hours, FinalGradeCEMS) %>%
+  filter(subject=="OcnA" & FinalGradeCEMS>60) %>%
+  arrange(desc(section))
+
+view(fire)
+```
+
+### Deriving info with dplyr
+
+We will practice summarise () and group_by () functions now.
+
+### Summarise () Function
+
+Using sci_classes data and the summarise() function:
+
+-   Get a distinct count of course ids.
+
+-   Use the %\>% operator
+
+```{r}
+sci_classes %>%
+  summarise(courses=n_distinct(course_id))
+```
+
+-   Get a distinct count of course ids.
+
+-   Use the \|\> operator
+
+```{r}
+sci_classes |>
+  summarise(courses=n_distinct(course_id))
+```
+
+### Group_by () Function
+
+Using the sci_classes data and the pipe operator.
+
+-   Filter final grades to remove NAs. \_\_\>is.na
+
+-   Group your data by **subject** and **gender**.
+
+-   **Summarise** your data to calculate the following stats:
+
+-   total number of students
+
+-   mean final grade
+
+-   mean time spent in the course
+
+-   Assign to a new object
+
+-   Examine the contents using a method of your choosing.
+
+```{r}
+apple_cider<-sci_classes %>%
+  filter(!is.na(FinalGradeCEMS)) %>%
+  group_by(subject,Gender) %>%
+  summarise(total=sum(student_id), grade=mean(FinalGradeCEMS), time=mean(TimeSpent_hours))
+```
+
+### Mutate () Function
+
+Replace the dashed lines in the following code to;
+
+-   Create a new variable called score that is the product of percentage earned and 100
+
+-   Create a faceted scatter plot with hours spent in the course on the x-axis, score on the y-axis, and point colored by gender.
+
+-   Include an alpha value to your graph.
+
+```{r eval=FALSE}
+sci_classes %>%
+  mutate(score = percentage_earned * 100) %>%
+  ggplot() +
+  geom_point(aes(x = TimeSpent_hours,
+                           y = score,
+                           color = Gender,
+                           alpha = 0.5)) +
+  facet_wrap(~subject)
+
+# When I run this section, I receive a warning that 5 rows contained missing values. I'm unsure exactly where this is coming from. Additionally, in the original code, it was written as: geom_point(_____ = _____(___ = ______,___ = ______, ___ = ______, ____ = ______)) but I don't know what should go right after geom_point before aes. The output appears to be ok as I see graphs with the plotted points but I'd be curious to know what I might be missing. 
+
+```
+
+## Final Step:
+
+You are almost done, all you need to is to render your file and publish it in one of the following platform.
+
+#### [**Your Turn:**]{.underline}
+
+**Render File:** For now, we will wrap up this work by converting our work into a webpage that can be used to communicate your learning and demonstrate some of your new R skills. To do so, you will need to "render" your document by clicking the Render button in the menu bar at that the top of this file. This will do two things; it will:
+
+1.  check through all your code for any errors; and,
+
+2.  create a file in your directory that you can use to share you work through [Posit Cloud](https://posit.cloud/learn/guide#publish-from-cloud), [RPubs](https://rpubs.com "RPubs") , [GitHub Pages](https://pages.github.com "GitHub Pages"), [Quarto Pub](https://quartopub.com "Quarto Pub"), or other methods.
+
+3.  Submit your link to the Blackboard!
+
+Now that you've finished your Rtutorial study, scroll back to the very top of this Quarto Document and change the author: "YOUR NAME HERE" to your actual name surrounded by quotation marks like so: author: "Dr. Cansu Tatar".
+
+#### 
